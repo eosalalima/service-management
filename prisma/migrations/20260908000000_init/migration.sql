@@ -1,0 +1,13 @@
+CREATE TYPE "WorkOrderStatus" AS ENUM ('PENDING', 'SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
+CREATE TABLE "Customer" ("id" TEXT NOT NULL, "name" TEXT NOT NULL, "email" TEXT NOT NULL, "phone" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Customer_pkey" PRIMARY KEY ("id"));
+CREATE TABLE "Service" ("id" TEXT NOT NULL, "name" TEXT NOT NULL, "description" TEXT, "price" DECIMAL(10,2) NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Service_pkey" PRIMARY KEY ("id"));
+CREATE TABLE "WorkOrder" ("id" TEXT NOT NULL, "title" TEXT NOT NULL, "description" TEXT, "status" "WorkOrderStatus" NOT NULL DEFAULT 'PENDING', "scheduledFor" TIMESTAMP(3), "customerId" TEXT NOT NULL, "serviceId" TEXT NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "WorkOrder_pkey" PRIMARY KEY ("id"));
+CREATE UNIQUE INDEX "Customer_email_key" ON "Customer"("email");
+CREATE INDEX "Customer_name_idx" ON "Customer"("name");
+CREATE INDEX "Service_name_idx" ON "Service"("name");
+CREATE INDEX "WorkOrder_status_updatedAt_idx" ON "WorkOrder"("status", "updatedAt");
+CREATE INDEX "WorkOrder_customerId_idx" ON "WorkOrder"("customerId");
+CREATE INDEX "WorkOrder_serviceId_idx" ON "WorkOrder"("serviceId");
+CREATE INDEX "WorkOrder_scheduledFor_idx" ON "WorkOrder"("scheduledFor");
+ALTER TABLE "WorkOrder" ADD CONSTRAINT "WorkOrder_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "WorkOrder" ADD CONSTRAINT "WorkOrder_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "Service"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
